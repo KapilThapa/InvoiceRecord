@@ -1,0 +1,33 @@
+
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+@import '~font-awesome/scss/font-awesome';
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+.navbar-laravel {
+  	background-color: #fff;
+	border-bottom: 1px solid #d3e0e9;
+}
+.card-header-bg-white{
+	background-color:white;
+}
+.content{
+	padding-top:1rem;
+	background-color:#fbfbfb;
+}
+.tab-content{
+	border-left:1px solid #dee2e6;
+	border-right:1px solid #dee2e6;
+	border-bottom:1px solid #dee2e6;
+	-webkit-box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+	box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+}
+.custom-card{
+	-webkit-box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+	box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+}
