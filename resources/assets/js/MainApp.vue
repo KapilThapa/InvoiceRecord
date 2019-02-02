@@ -5,23 +5,23 @@
 			<div class="row" v-if="isLoggedIn">
 				<div class="col-md-12">
 					<ul class="nav nav-tabs">
-						<li class="nav-item">
-							<router-link :to="{name: 'dashboard'}" class="nav-link " :class="{'active': subIsActive('/dashboard')}" exact>
+						<li :class="{'active': subIsActive('/dashboard')}" exact>
+							<router-link :to="{name: 'dashboard'}">
 								Dashboard
                     </router-link>
 						</li>
-						<li class="nav-item">
-							<router-link :to="{name: 'recording'}" class="nav-link " :class="{'active': subIsActive('/recording')}" exact>
+						<li :class="{'active': subIsActive('/recording')}" exact>
+							<router-link :to="{name: 'recording'}">
 								Record Keeping
                     </router-link>
 						</li>
-						<li class="nav-item">
-							<router-link :to="{name: 'records'}" class="nav-link " :class="{'active': subIsActive('/records')}" exact>
+						<li :class="{'active': subIsActive('/records')}" exact>
+							<router-link :to="{name: 'records'}">
 								Filter Records
                     </router-link>
 						</li>
 					</ul>
-					<div class="tab-content p-3 bg-white" id="nav-tabContent">
+					<div class="tab-content p-15 bg-white" id="nav-tabContent">
 						<router-view></router-view>
 					</div>
 				</div>

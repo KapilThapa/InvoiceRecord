@@ -6,6 +6,7 @@ import {routes} from './routes.js';
 import storeData from './store.js';
 import MainApp from './MainApp.vue';
 import Vuelidate from 'vuelidate';
+import swal from 'sweetalert'
 
 Vue.use(Vuelidate);
 Vue.use(VueRouter);

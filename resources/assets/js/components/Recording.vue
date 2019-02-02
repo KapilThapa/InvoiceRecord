@@ -2,8 +2,8 @@
 	<div>
 		<div class="row">
 			<div class="col-md-3">
-				<div class="card custom-card">
-					<div class="card-body">
+				<div class="panel panel-default">
+					<div class="panel-body">
 						<BillRecord></BillRecord>
 					</div>
 				</div>
