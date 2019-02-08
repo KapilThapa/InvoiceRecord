@@ -26,3 +26,4 @@ Route::group(['prefix' => 'auth'], function ($router) {
 });
 
 Route::get('/checkbill/{billno}','Api\InvoiceController@checkInvoiceNo');
+Route::resource('/invoice','Api\InvoiceController');

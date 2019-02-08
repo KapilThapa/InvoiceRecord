@@ -2,21 +2,21 @@
 	<div id="newbills">
 		<div class="row">
 			<div class="col-md-8">
-				<div class="form-group" :class="{ 'has-error': $v.bill.bill_no.$error }">
+				<div class="form-group" :class="{ 'has-error': $v.bill.bill_no.$error || bill_exist }">
 					<label for="bill_no">Bill No. :</label>
 					<div class="input-group">
-						<input type="number" name="bill_no" min="0" id="bill_no" v-model:value="bill.bill_no" class="form-control" :disabled="bill_no_lock" v-on:keydown.13="focusOnEnter('#customer_name')" @blur="focusOnEnter('#customer_name')">
+						<input type="number" name="bill_no" min="0" id="bill_no" v-model:value="bill.bill_no" class="form-control" :disabled="bill_no_lock" v-on:keydown.13="focusOnEnter('#delivery_date')">
 						<div class="input-group-btn">
 							<button class="btn btn-default" @click="togglelock()"><i :class="bill_no_lock ? 'fa fa-unlock' : 'fa fa-lock'"></i></button>
 						</div>
-						<span v-if="bill_exist">bill already exist!</span>
 					</div>
+					<span v-if="bill_exist">bill already exist!</span>
 				</div>
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="delivery_date">Delivery Date</label>
-			<date-picker lang="en" :not-before="new Date()" type="date" v-model="bill.delivery_date" :format="'YYYY/MM/DD'" width="100%" :input-class="'form-control'" @clear="resetDate()" id="delivery_date"></date-picker>
+			<date-picker lang="en" :not-before="new Date()" type="date" v-model="bill.delivery_date" :date-format="'YYYY/MM/DD'" value-type='format' :format="'YYYY/MM/DD'" width="100%" :input-class="'form-control'" @clear="resetDate()" :input-attr="{id:'delivery_date'}"></date-picker>
 		</div>
 		<div class="form-group">
 			<label for="customer_name">Customer's Name :</label>
@@ -40,9 +40,13 @@
 				</div>
 			</div>
 		</div>
-		<div class="form-group" :class="{ 'has-error': $v.bill.due.$error }">
+		<div class="form-group">
 			<label for="due">Due :</label>
-			<input type="number" id="due" min="0" v-model:value="bill.due" class="form-control" disabled>
+			<input type="number" id="due" min="0" v-model:value="due" class="form-control" disabled>
+		</div>
+		<div class="form-group">
+			<label for="note">Note :</label>
+			<textarea name="note" id="note" rows="2" v-model:value="bill.note" class="form-control"></textarea>
 		</div>
 		<hr>
 		<div class="row">
@@ -57,19 +61,19 @@
 	import { required, minValue, between } from 'vuelidate/lib/validators'
 	import DatePicker from 'vue2-datepicker'
 	function lessthan(){
-		return this.bill.total >= this.bill.advance;
+		return parseInt(this.bill.total) >= parseInt(this.bill.advance);
 	}
 	export default {
 		data(){
 			return{
 				bill:{
 					bill_no:'',
-					delivery_date:new Date(),
+					delivery_date:'',
 					customer_name:'',
 					contact:'',
 					total:'',
 					advance:'',
-					due:''
+					note:''
 				},
 				bill_no_lock: false,
 				bill_exist: false,
@@ -83,14 +87,10 @@
 				bill_no:{required},
 				delivery_date:{required},
 				total:{required},
-				advance:{required,lessthan},
-				due:{required}
+				advance:{lessthan}
 			}
 		},
 		methods:{
-			lessthan(){
-				return this.bill.total >= this.bill.advance;
-			},
 			togglelock(){
 				let that = this;
 				if(that.bill_no_lock){
@@ -101,26 +101,18 @@
 			},
 			focusOnEnter(input){
 				let that = this;
-				if(input == "#customer_name"){
-					$.ajax({
-						url: '/api/checkbill/'+that.bill.bill_no,
-						type: 'GET',
-						headers: {
-							'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-						},
-					})
-					.done(function(response) {
-						if(response==0){
+				if(input == "#delivery_date"){
+					axios.get('/api/checkbill/'+that.bill.bill_no)
+					.then(function(response) {
+						if(response.data==0){
 							that.bill_exist=true;
 						}else{
 							that.bill_exist=false;
 							$(input).focus();
 						}
 					})
-					.fail(function(response) {
+					.catch(function(response) {
 					})
-					.always(function(response) {
-					});
 				}
 				else if(input == "#total"){
 					// check length of name
@@ -136,16 +128,47 @@
 			saveBillDetail(){
 				let that = this;
             that.$v.$touch();
-            if (that.$v.$invalid) {
-               swal("Oops!",'There are incomplete required fields. Please fill them to continue.',{
+            if (that.bill_exist) {
+            	swal("Oops!",'This Bill has already been recorded.',{
                   icon:"error"
                });
+            }else{
+	            if (that.$v.$invalid) {
+	               swal("Oops!",'There are incomplete required fields. Please fill them to continue.',{
+	                  icon:"error"
+	               });
+	            } else {
+	            	axios.post('/api/invoice', that.bill)
+	               .then(function (response) {
+	                  swal(response.data.msg, {
+	                     icon: "success",
+	                     timer: 1000,
+	                     buttons:false
+	                  });
+							that.bill.bill_no='';
+							that.bill.delivery_date='';
+							that.bill.customer_name='';
+							that.bill.contact='';
+							that.bill.total='';
+							that.bill.advance='';
+							that.bill.note='';
+
+							// reset Error
+							// focus on the bill
+							$("#bill_no").focus();
+	               })
+	               .catch(function (error) {
+	                  console.log(error);
+	               });
+	            }
             }
 			}
 		},
 		computed:{
 			due: function(){
-           	return this.bill.total-this.bill.advance;
+           	if (this.bill.total-this.bill.advance > 0) {
+           		return this.bill.total-this.bill.advance
+           	}
 			}
 		}
 	}
