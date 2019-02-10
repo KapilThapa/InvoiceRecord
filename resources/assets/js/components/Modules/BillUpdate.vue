@@ -123,16 +123,19 @@
 			updateBillDetail(){
 				let that = this;
 				that.$v.$touch();
-				if (that.bill_total > 0) {
+				if (that.total > 0) {
+					console.log('total');
 					if (that.$v.$invalid) {
 	               swal("Oops!",'There are incomplete required fields. Please fill them to continue.',{
 	                  icon:"error"
 	               });
+	            }else{
+	            	console.log('here');
+	            	axios.put('api/invoice/'+that.bill_no,{pay_amount:that.pay_amount,discount_note:that.discount_note})
+	            	.then((response)=>{
+
+	            	});
 	            }
-				}else{
-					swal("Oops!",'Here!!',{
-                  icon:"error"
-               });
 				}
 			}
 		}
