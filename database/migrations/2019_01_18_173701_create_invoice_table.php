@@ -21,6 +21,8 @@ class CreateInvoiceTable extends Migration
             $table->integer('status_id');
             $table->string('notes')->nullable();
             $table->integer('bill_total')->unsigned();
+            $table->integer('discount')->unsigned()->nullable();
+            $table->string('discount_note')->nullable();
             $table->date('delivery_date');
             $table->date('full_payment_date')->nullable();
             $table->timestamps();

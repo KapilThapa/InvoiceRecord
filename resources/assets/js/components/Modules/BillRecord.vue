@@ -5,7 +5,7 @@
 				<div class="form-group" :class="{ 'has-error': $v.bill.bill_no.$error || bill_exist }">
 					<label for="bill_no">Bill No. :</label>
 					<div class="input-group">
-						<input type="number" name="bill_no" min="0" id="bill_no" v-model:value="bill.bill_no" class="form-control" :disabled="bill_no_lock" v-on:keydown.13="focusOnEnter('#delivery_date')">
+						<input type="number" name="bill_no" min="1" id="bill_no" v-model:value="bill.bill_no" class="form-control" :disabled="bill_no_lock" v-on:keydown.13="focusOnEnter('#delivery_date')">
 						<div class="input-group-btn">
 							<button class="btn btn-default" @click="togglelock()"><i :class="bill_no_lock ? 'fa fa-unlock' : 'fa fa-lock'"></i></button>
 						</div>
@@ -51,7 +51,7 @@
 		<hr>
 		<div class="row">
 			<div class="col-sm-12">
-				<button class="btn btn-default" @click="saveBillDetail()" type="submit">Save</button>
+				<button class="btn btn-default" @click="saveBillDetail()">Save</button>
 			</div>
 		</div>
 	</div>

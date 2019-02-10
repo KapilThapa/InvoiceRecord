@@ -110,7 +110,23 @@ class InvoiceController extends Controller
      */
     public function edit($id)
     {
-        //
+        $bill = DB::select("select 
+                                i.bill_no,
+                                i.bill_total,
+                                sum(ip.payment_amount) as total_paid,
+                                i.bill_total - IFNULL(sum(ip.payment_amount), 0) as due
+                                    from invoice as i 
+                                        left join invoice_payments as ip 
+                                            on i.id = ip.invoice_id 
+                                        where i.bill_no = $id
+                                group by i.bill_total,i.bill_no;");
+        if (count($bill) > 0) {
+            return response()->json($bill,200);
+        }else{
+            return response()->json([
+                'msg' => 'There is no bill recorded with the provided bill number.'
+            ],404);
+        }
     }
 
     /**
